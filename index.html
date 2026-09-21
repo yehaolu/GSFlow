@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="GSFlow accelerates 3D Gaussian Splatting video rendering by reusing inter-frame geometry through geometry pixel flow.">
+  <meta name="keywords" content="GSFlow, 3D Gaussian Splatting, 3DGS, rendering acceleration, geometry pixel flow">
+  <meta property="og:title" content="GSFlow: Video Rendering Acceleration for 3D Gaussian Splatting">
+  <meta property="og:description" content="A sequence-level acceleration framework for 3D Gaussian Splatting via geometry pixel flow.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/images/teaser.png">
+  <title>GSFlow | Video Rendering Acceleration for 3D Gaussian Splatting</title>
+  <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/site.css">
+  <script src="assets/js/site.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Primary navigation">
+    <div class="nav-inner">
+      <a class="wordmark" href="#top" aria-label="GSFlow home">GSFlow</a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#videos">Videos</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main">
+    <header class="hero" id="top">
+      <div class="container hero-inner">
+        <p class="eyebrow">Sequence-level 3DGS acceleration</p>
+        <h1><span>GSFlow:</span> Video Rendering Acceleration for 3D Gaussian Splatting via Geometry Pixel Flow</h1>
+
+        <p class="review-status">Under Review</p>
+      </div>
+    </header>
+
+    <section class="teaser-section" aria-labelledby="teaser-title">
+      <div class="container container-narrow">
+        <h2 class="visually-hidden" id="teaser-title">GSFlow at a glance</h2>
+        <figure class="paper-figure teaser-figure">
+          <img src="assets/images/teaser.png" alt="GSFlow reuses inter-frame cues between rasterized keyframes and improves frame rate across 3DGS baselines." width="2334" height="817">
+          <figcaption>
+            GSFlow avoids rendering every frame from scratch. It reuses geometry between keyframes and plugs into existing frame-level 3DGS accelerators for multiplicative gains.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-muted" id="abstract">
+      <div class="container prose">
+        <div class="section-heading centered">
+          <p class="section-kicker">Overview</p>
+          <h2>Abstract</h2>
+        </div>
+        <p>
+          Recent work on accelerating 3D Gaussian Splatting (3DGS) has mainly optimized each frame independently through pruning, rasterization, or attribute compression. This overlooks the strong temporal coherence of continuous camera trajectories and repeats nearly identical work across adjacent views. GSFlow introduces a sequence-level acceleration paradigm that is orthogonal to these frame-level methods.
+        </p>
+        <p>
+          GSFlow renders RGB and depth only for selected keyframes, lifts their pixels into world coordinates, and projects them into following views as geometry pixel flow. Sparse blank regions are completed either by a lightweight inpainting network for quality or a training-free CUDA filter for speed. A self-supervised depth calibration strategy further suppresses edge flicker by aligning inter-frame geometry. Across accelerated 3DGS baselines, GSFlow delivers about 2x additional speedup while preserving rendering quality and temporal consistency.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" id="method">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="section-kicker">Method</p>
+          <h2>Geometry pixel flow</h2>
+          <p class="section-lede">Render selected keyframes once, then move their pixels through 3D space to synthesize adjacent views.</p>
+        </div>
+
+        <figure class="paper-figure wide-figure">
+          <img src="assets/images/geometry-pixel-flow.png" alt="Geometry pixel flow lifts a rendered keyframe from 2D to world coordinates and projects it into a target frame, with blank-pixel and edge-flicker challenges." width="1535" height="660" loading="lazy">
+          <figcaption>
+            A keyframe is lifted from 2D to 3D using its depth and camera pose, then projected into target views. Blank pixels stay spatially sparse, while depth discontinuities motivate explicit edge stabilization.
+          </figcaption>
+        </figure>
+
+        <div class="feature-grid">
+          <article>
+            <span class="feature-index">01</span>
+            <h3>Project</h3>
+            <p>RGB-D keyframes are lifted to world coordinates and reprojected along the camera trajectory, replacing costly Gaussian sorting and alpha blending on intermediate frames.</p>
+          </article>
+          <article>
+            <span class="feature-index">02</span>
+            <h3>Complete</h3>
+            <p>Sparse blank regions are filled by a compact UNet for higher fidelity or a customized nearest-neighbor CUDA filter for maximum throughput.</p>
+          </article>
+          <article>
+            <span class="feature-index">03</span>
+            <h3>Stabilize</h3>
+            <p>Self-supervised depth calibration aligns corresponding 3D points across nearby frames, reducing edge errors and visible temporal flicker.</p>
+          </article>
+        </div>
+
+        <figure class="paper-figure wide-figure pipeline-figure">
+          <img src="assets/images/pipeline.png" alt="GSFlow training and inference pipeline, including self-supervised depth calibration, blank-pixel inpainting, and geometry pixel flow." width="1535" height="710" loading="lazy">
+          <figcaption>
+            Training calibrates depth and optionally learns a 2.4 MiB completion network. Inference alternates exact 3DGS keyframes with fast projected frames.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="section section-muted" id="results">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="section-kicker">Experiments</p>
+          <h2>Plug-in acceleration</h2>
+          <p class="section-lede">GSFlow compounds the gains of existing frame-level methods instead of replacing them.</p>
+        </div>
+
+        <div class="result-summary" aria-label="Selected quantitative results">
+          <div class="dataset-result">
+            <span class="result-method">Tanks&amp;Temples</span>
+            <strong>92 <small>to</small> 224 FPS</strong>
+            <span>3DGS: 2.4x faster, 30.77 dB</span>
+            <strong>165 <small>to</small> 310 FPS</strong>
+            <span>LocoGS: 1.9x faster, 30.22 dB</span>
+          </div>
+          <div class="dataset-result">
+            <span class="result-method">Custom Video Dataset</span>
+            <strong>169 <small>to</small> 426 FPS</strong>
+            <span>3DGS: 2.5x faster, 33.15 dB</span>
+            <strong>421 <small>to</small> 637 FPS</strong>
+            <span>LocoGS: 1.5x faster, 31.87 dB</span>
+          </div>
+        </div>
+
+        <div class="table-wrap" tabindex="0" aria-label="Scrollable results table">
+          <table>
+            <caption>Main results on Tanks&amp;Temples and Custom Video Dataset, projection interval T = 3, single RTX 4090.</caption>
+            <thead>
+              <tr>
+                <th scope="col" rowspan="2">Method</th>
+                <th scope="colgroup" colspan="4">Tanks&amp;Temples</th>
+                <th scope="colgroup" colspan="4">Custom Video Dataset</th>
+              </tr>
+              <tr>
+                <th scope="col">PSNR</th><th scope="col">SSIM</th><th scope="col">LPIPS</th><th scope="col">FPS</th>
+                <th scope="col">PSNR</th><th scope="col">SSIM</th><th scope="col">LPIPS</th><th scope="col">FPS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">3DGS</th>
+                <td>31.44</td>
+                <td>0.926</td>
+                <td>0.143</td>
+                <td>92</td>
+                <td>33.77</td>
+                <td>0.946</td>
+                <td>0.160</td>
+                <td>169</td>
+              </tr>
+              <tr class="highlight-row">
+                <th scope="row">3DGS + GSFlow</th>
+                <td>30.77</td>
+                <td>0.913</td>
+                <td>0.155</td>
+                <td><strong>224</strong></td>
+                <td>33.15</td>
+                <td>0.928</td>
+                <td>0.177</td>
+                <td><strong>426</strong></td>
+              </tr>
+              <tr>
+                <th scope="row">LocoGS</th>
+                <td>31.23</td>
+                <td>0.921</td>
+                <td>0.157</td>
+                <td>165</td>
+                <td>32.62</td>
+                <td>0.933</td>
+                <td>0.191</td>
+                <td>421</td>
+              </tr>
+              <tr class="highlight-row">
+                <th scope="row">LocoGS + GSFlow</th>
+                <td>30.22</td>
+                <td>0.915</td>
+                <td>0.167</td>
+                <td><strong>310</strong></td>
+                <td>31.87</td>
+                <td>0.919</td>
+                <td>0.211</td>
+                <td><strong>637</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section video-section" id="videos">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="section-kicker">Visual comparisons</p>
+          <h2>Rendering in motion</h2>
+          <p class="section-lede">Switch between frame-synchronized quality comparisons and acceleration-performance recordings.</p>
+        </div>
+
+        <div class="segmented-control" role="group" aria-label="Video comparison type">
+          <button type="button" class="mode-button is-active" data-mode="synchronized" aria-pressed="true">Synchronized comparison</button>
+          <button type="button" class="mode-button" data-mode="acceleration" aria-pressed="false">Acceleration performance</button>
+        </div>
+
+        <div class="scene-picker" role="group" aria-label="Select a scene">
+          <button type="button" data-scene="garden" class="is-active" aria-pressed="true">Garden</button>
+          <button type="button" data-scene="drjohnson" aria-pressed="false">Dr Johnson</button>
+          <button type="button" data-scene="kitchen" aria-pressed="false">Kitchen</button>
+          <button type="button" data-scene="princess" aria-pressed="false">Princess</button>
+          <button type="button" data-scene="red_leaves" aria-pressed="false">Red Leaves</button>
+          <button type="button" data-scene="sand_clock" aria-pressed="false">Sand Clock</button>
+          <button type="button" data-scene="doll" aria-pressed="false">Doll</button>
+        </div>
+
+        <div class="video-stage">
+          <video id="showcase-video" controls autoplay muted loop playsinline preload="metadata" width="854" height="240" aria-describedby="video-description">
+            <source src="assets/videos/synchronized/garden.mp4" type="video/mp4">
+            Your browser does not support MP4 video.
+          </video>
+        </div>
+
+        <div class="video-meta">
+          <div>
+            <p class="video-label" id="video-label">Garden / Synchronized comparison</p>
+            <p id="video-description">Frame-aligned playback makes temporal consistency and rendering fidelity easy to inspect.</p>
+          </div>
+          <a id="video-open" href="assets/videos/synchronized/garden.mp4" target="_blank" rel="noopener">Open video</a>
+        </div>
+        <p class="video-status" id="video-status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>GSFlow project page</p>
+      <p>Page structure inspired by <a href="https://zgctroy.github.io/CamI2V/" target="_blank" rel="noopener">CamI2V</a> and the academic project page community.</p>
+    </div>
+  </footer>
+</body>
+</html>
