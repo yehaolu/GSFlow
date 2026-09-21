@@ -22,9 +22,9 @@
       <a class="wordmark" href="#top" aria-label="GSFlow home">GSFlow</a>
       <div class="nav-links">
         <a href="#abstract">Abstract</a>
+        <a href="#videos">Videos</a>
         <a href="#method">Method</a>
         <a href="#results">Results</a>
-        <a href="#videos">Videos</a>
       </div>
     </div>
   </nav>
@@ -63,6 +63,47 @@
         <p>
           GSFlow renders RGB and depth only for selected keyframes, lifts their pixels into world coordinates, and projects them into following views as geometry pixel flow. Sparse blank regions are completed either by a lightweight inpainting network for quality or a training-free CUDA filter for speed. A self-supervised depth calibration strategy further suppresses edge flicker by aligning inter-frame geometry. Across accelerated 3DGS baselines, GSFlow delivers about 2x additional speedup while preserving rendering quality and temporal consistency.
         </p>
+      </div>
+    </section>
+
+    <section class="section video-section" id="videos">
+      <div class="container">
+        <div class="section-heading centered">
+          <p class="section-kicker">Visual comparisons</p>
+          <h2>Rendering in motion</h2>
+          <p class="section-lede">Switch between frame-synchronized quality comparisons and acceleration-performance recordings.</p>
+        </div>
+
+        <div class="segmented-control" role="group" aria-label="Video comparison type">
+          <button type="button" class="mode-button is-active" data-mode="synchronized" aria-pressed="true">Synchronized comparison</button>
+          <button type="button" class="mode-button" data-mode="acceleration" aria-pressed="false">Acceleration performance</button>
+        </div>
+
+        <div class="scene-picker" role="group" aria-label="Select a scene">
+          <button type="button" data-scene="garden" class="is-active" aria-pressed="true">Garden</button>
+          <button type="button" data-scene="drjohnson" aria-pressed="false">Dr Johnson</button>
+          <button type="button" data-scene="kitchen" aria-pressed="false">Kitchen</button>
+          <button type="button" data-scene="princess" aria-pressed="false">Princess</button>
+          <button type="button" data-scene="red_leaves" aria-pressed="false">Red Leaves</button>
+          <button type="button" data-scene="sand_clock" aria-pressed="false">Sand Clock</button>
+          <button type="button" data-scene="doll" aria-pressed="false">Doll</button>
+        </div>
+
+        <div class="video-stage">
+          <video id="showcase-video" controls autoplay muted loop playsinline preload="metadata" width="854" height="240" aria-describedby="video-description">
+            <source src="assets/videos/synchronized/garden.mp4" type="video/mp4">
+            Your browser does not support MP4 video.
+          </video>
+        </div>
+
+        <div class="video-meta">
+          <div>
+            <p class="video-label" id="video-label">Garden / Synchronized comparison</p>
+            <p id="video-description">Frame-aligned playback makes temporal consistency and rendering fidelity easy to inspect.</p>
+          </div>
+          <a id="video-open" href="assets/videos/synchronized/garden.mp4" target="_blank" rel="noopener">Open video</a>
+        </div>
+        <p class="video-status" id="video-status" role="status" aria-live="polite"></p>
       </div>
     </section>
 
@@ -195,47 +236,6 @@
             </tbody>
           </table>
         </div>
-      </div>
-    </section>
-
-    <section class="section video-section" id="videos">
-      <div class="container">
-        <div class="section-heading centered">
-          <p class="section-kicker">Visual comparisons</p>
-          <h2>Rendering in motion</h2>
-          <p class="section-lede">Switch between frame-synchronized quality comparisons and acceleration-performance recordings.</p>
-        </div>
-
-        <div class="segmented-control" role="group" aria-label="Video comparison type">
-          <button type="button" class="mode-button is-active" data-mode="synchronized" aria-pressed="true">Synchronized comparison</button>
-          <button type="button" class="mode-button" data-mode="acceleration" aria-pressed="false">Acceleration performance</button>
-        </div>
-
-        <div class="scene-picker" role="group" aria-label="Select a scene">
-          <button type="button" data-scene="garden" class="is-active" aria-pressed="true">Garden</button>
-          <button type="button" data-scene="drjohnson" aria-pressed="false">Dr Johnson</button>
-          <button type="button" data-scene="kitchen" aria-pressed="false">Kitchen</button>
-          <button type="button" data-scene="princess" aria-pressed="false">Princess</button>
-          <button type="button" data-scene="red_leaves" aria-pressed="false">Red Leaves</button>
-          <button type="button" data-scene="sand_clock" aria-pressed="false">Sand Clock</button>
-          <button type="button" data-scene="doll" aria-pressed="false">Doll</button>
-        </div>
-
-        <div class="video-stage">
-          <video id="showcase-video" controls autoplay muted loop playsinline preload="metadata" width="854" height="240" aria-describedby="video-description">
-            <source src="assets/videos/synchronized/garden.mp4" type="video/mp4">
-            Your browser does not support MP4 video.
-          </video>
-        </div>
-
-        <div class="video-meta">
-          <div>
-            <p class="video-label" id="video-label">Garden / Synchronized comparison</p>
-            <p id="video-description">Frame-aligned playback makes temporal consistency and rendering fidelity easy to inspect.</p>
-          </div>
-          <a id="video-open" href="assets/videos/synchronized/garden.mp4" target="_blank" rel="noopener">Open video</a>
-        </div>
-        <p class="video-status" id="video-status" role="status" aria-live="polite"></p>
       </div>
     </section>
 
