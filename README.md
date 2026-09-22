@@ -27,5 +27,5 @@ All links are relative, so the page works both at a user site root and in a proj
 ## Content notes
 
 - Replace or add a code link in `index.html` once the public repository is available.
-- The public page is currently anonymized as `Under Review`; restore author, venue, paper links, and citation information after review if appropriate.
+- The public page lists the current author and affiliation information supplied by the project team.
 - The page uses no external JavaScript or font dependencies.
