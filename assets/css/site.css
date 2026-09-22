@@ -179,11 +179,16 @@ h1 span {
   color: var(--accent);
 }
 
-.review-status {
+.publication-authors {
   margin: 0;
-  color: var(--muted);
   font-size: 20px;
   font-weight: 700;
+}
+
+.publication-affiliation {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 16px;
 }
 
 .teaser-section {
@@ -604,7 +609,7 @@ tbody tr:last-child td {
     line-height: 1.16;
   }
 
-  .review-status {
+  .publication-authors {
     font-size: 18px;
   }
 
