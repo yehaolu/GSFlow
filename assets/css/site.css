@@ -347,7 +347,7 @@ h1 span {
   font-size: 13px;
 }
 
-.dataset-result strong:nth-of-type(2) {
+.dataset-result strong ~ strong {
   margin-top: 20px;
 }
 
